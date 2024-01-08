@@ -2,7 +2,9 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-const TicketForm = () => {
+const TicketForm = ({ticket}) => {
+    const EDITMODE =ticket.ticket._id === "new" ? false : true
+    console.log(EDITMODE)
     const router = useRouter()
     const startingTicketData = {
         title: "",
@@ -12,17 +14,28 @@ const TicketForm = () => {
         status: "not started",
         category: "Hardware Problem"
     }
+
+
+    if(EDITMODE){
+        startingTicketData['title'] = ticket.ticket.title
+        startingTicketData['description'] = ticket.ticket.description
+        startingTicketData['priority'] = ticket.ticket.priority
+        startingTicketData['progress'] = ticket.ticket.progress
+        startingTicketData['status'] = ticket.ticket.status
+        startingTicketData['category'] = ticket.ticket.category
+    }
     const[formData, setFormData] = useState(startingTicketData)
 
    
     const handleSubmit = async (e) => {
         
-        console.log(formData)
         e.preventDefault()
-        const res = await fetch('/api/Tickets', {
+        const res = await fetch('/api/Tickets/new', {
             method: "POST",
             body: JSON.stringify({formData})
         })
+
+        console.log(res)
        
             router.refresh()
         router.push("/")
